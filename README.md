@@ -46,21 +46,21 @@ For each customer profile in the validation set:
 
 •	Manual review of misclassified samples revealed several optimization opportunities:
 
-  o	Automatically label customers with no visits for over 3 years as churned across train/validation/test sets, bypassing RAG and inference because RAG benefits from relevant volume, not sheer volume.
+&nbsp;&nbsp;o	Automatically label customers with no visits for over 3 years as churned across train/validation/test sets, bypassing RAG and inference because RAG benefits from relevant volume, not sheer volume.
 
-  o	Strengthen preprocessing by removing accident-related repair records, which are non-habitual and introduce noise
+&nbsp;&nbsp;o	Strengthen preprocessing by removing accident-related repair records, which are non-habitual and introduce noise
 
-  o	Feed manually reviewed misclassified samples back into the RAG knowledge base for continuous improvement
+&nbsp;&nbsp;o	Feed manually reviewed misclassified samples back into the RAG knowledge base for continuous improvement
 
-  o	Selecting stronger OpenAI embedding and chat models is expected to further improve performance. In this implementation, text-embedding-3-small and gpt-5-nano are used primarily for cost efficiency when operating at scale datasets.
+&nbsp;&nbsp;o	Selecting stronger OpenAI embedding and chat models is expected to further improve performance. In this implementation, text-embedding-3-small and gpt-5-nano are used primarily for cost efficiency when operating at scale datasets.
 
-  o	Future exploration:
+&nbsp;&nbsp;o	Future exploration:
 
-    - Adopt a sliding-window–based churn labeling strategy instead of a purely time-statistics–based approach. Different business scenarios require different churn definitions, and the choice of labeling methodology has a direct and significant impact on model behavior, performance, and interpretability.
+&nbsp;&nbsp;&nbsp;- Adopt a sliding-window–based churn labeling strategy instead of a purely time-statistics–based approach. Different business scenarios require different churn definitions, and the choice of labeling methodology has a direct and significant impact on model behavior, performance, and interpretability.
 
-    - Embed ML features directly as vectors instead of structured text
+&nbsp;&nbsp;&nbsp;- Embed ML features directly as vectors instead of structured text
 
-    - Explore deep learning approaches (e.g., Transformers) for feature engineering. While DL may offer stronger representation power, it is harder to align with business explainability requirements. A hybrid ML + DL approach is likely the most practical path forward.
+&nbsp;&nbsp;&nbsp;- Explore deep learning approaches (e.g., Transformers) for feature engineering. While DL may offer stronger representation power, it is harder to align with business explainability requirements. A hybrid ML + DL approach is likely the most practical path forward.
 
 ## Agentic Workflow
 
