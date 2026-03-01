@@ -58,9 +58,9 @@ For each customer profile in the validation set:
 
 &nbsp;&nbsp;&nbsp;- Adopt a sliding-window–based churn labeling strategy instead of a purely time-statistics–based approach. Different business scenarios require different churn definitions, and the choice of labeling methodology has a direct and significant impact on model behavior, performance, and interpretability.
 
-&nbsp;&nbsp;&nbsp;- Embed ML features directly as vectors instead of structured text
+&nbsp;&nbsp;&nbsp;- Embed ML features directly as vectors instead of structured text, and hybrid of text and vector by weights.
 
-&nbsp;&nbsp;&nbsp;- Explore deep learning approaches (e.g., Transformers) for feature engineering. While DL may offer stronger representation power, it is harder to align with business explainability requirements. A hybrid ML + DL approach is likely the most practical path forward.
+&nbsp;&nbsp;&nbsp;- Explore deep learning approaches (e.g., Transformers) for embedding-based feature engineering. While deep learning can offer richer representations than classical ML, it often poses challenges for business-level explainability. This exploration is driven by curiosity and experimentation, with the goal of evaluating practical trade-offs rather than immediate production adoption.
 
 ## Agentic Workflow
 
