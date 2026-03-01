@@ -42,11 +42,11 @@ For each customer profile in the validation set:
 
 ## Evaluation & Iterative Optimization
 
-•	Baseline performance (100 customers): AUC = 0.873
+•	Baseline performance with one hundred customers: AUC = 0.873
 
 •	Manual review of misclassified samples revealed several optimization opportunities:
 
-&nbsp;&nbsp;o	Automatically label customers with no visits for over 3 years as churned across train/validation/test sets, bypassing RAG and inference because RAG benefits from relevant volume, not sheer volume.
+&nbsp;&nbsp;o	Automatically label customers with no visits for over three years as churned across train/validation/test sets, bypassing RAG and inference because RAG benefits from relevant volume, not sheer volume.
 
 &nbsp;&nbsp;o	Strengthen preprocessing by removing accident-related repair records, which are non-habitual and introduce noise
 
