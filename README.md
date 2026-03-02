@@ -84,4 +84,8 @@ I will continue to share:
 
 •	The current AI landscape enables exciting experimentation that tightly integrates ML, DL, and agentic workflows.
 
+## Data Compliance
+
+Leveraged historical internal business data from Shanghai UnicData for this vehicle customer retention analysis, fully processed in-house and compliant with GDPR and data privacy requirements.
+
 Happy to share, discuss and exchange ideas further 🚀
