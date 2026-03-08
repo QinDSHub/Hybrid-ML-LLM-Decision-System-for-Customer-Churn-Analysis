@@ -3,8 +3,8 @@ This version focuses on data quality improvements, feature engineering, and a hy
 
 ## Feature Cleaning: repair_type<br>
 The repair_type feature was further standardized and cleaned. It is now used for:<br>
-•	Data filtering<br>
-•	Text-based semantic representation<br>
+-- •	Data filtering<br>
+-- •	Text-based semantic representation<br>
 ________________________________________
 ## Removal of Internal Vehicles<br>
 Internal vehicles were removed from the dataset to prevent potential bias in the analysis and modeling process.
