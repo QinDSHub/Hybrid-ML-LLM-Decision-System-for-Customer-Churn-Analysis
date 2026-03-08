@@ -12,15 +12,15 @@ ________________________________________
 ## Filtering Non-Active Service Visits<br>
 Only active service visits were retained. Records related to passive visits were removed.<br>
 Examples of passive visits include:<br>
-•	Warranty/PDI claims<br>
-•	Accident repairs<br>
-•	Mandatory maintenance<br>
-•	Warranty-related services
+&emsp;•	Warranty/PDI claims<br>
+&emsp;•	Accident repairs<br>
+&emsp;•	Mandatory maintenance<br>
+&emsp;•	Warranty-related services
 ________________________________________
 ## Additional Data Cleaning<br>
 Further cleaning was applied to noisy or problematic records:<br>
-•	day_diff: Invalid records were removed<br>
-•	mile_diff: Missing or abnormal values were imputed using the user's median daily mileage (day_speed_median)
+&emsp;•	day_diff: Invalid records were removed<br>
+&emsp;•	mile_diff: Missing or abnormal values were imputed using the user's median daily mileage (day_speed_median)
 ________________________________________
 ## Churn Labeling Strategy<br>
 Users who have not actively visited the service center for three years were labeled as: churn = 100%<br>
@@ -29,17 +29,17 @@ ________________________________________
 ## Feature Engineering<br>
 Both numerical features and text features were incorporated into the model.<br>
 Numerical Features<br>
-•	Standardized using scaling<br>
-•	The scaler was fit on the entire dataset to ensure consistent scaling across all samples<br>
+&emsp;•	Standardized using scaling<br>
+&emsp;•	The scaler was fit on the entire dataset to ensure consistent scaling across all samples<br>
 Text Features<br>
-•	Converted into 1536-dimensional embeddings using the OpenAI text embedding model<br>
-•	These embeddings capture semantic similarity
+&emsp;•	Converted into 1536-dimensional embeddings using the OpenAI text embedding model<br>
+&emsp;•	These embeddings capture semantic similarity
 ________________________________________
 ## Feature Fusion<br>
 Numerical and text embeddings were concatenated horizontally.<br>
 Feature weights were applied:<br>
-Numerical features: 70%<br>
-Text features: 30%<br>
+&emsp;•	Numerical features: 70%<br>
+&emsp;•	Text features: 30%<br>
 After concatenation, L2 normalization was applied and made sure fit on full dataset to ensure consistent vector scaling, and after that to split into train and valid.
 ________________________________________
 ## Why LLM Inference Was Not Used<br>
@@ -53,9 +53,9 @@ ________________________________________
 ## Prediction Method (KNN-Style Retrieval)<br>
 Instead of using a traditional classifier, this version adopts a vector similarity retrieval strategy.<br>
 For each sample in the validation set:<br>
-1.	Retrieve the Top-10 most similar users using cosine similarity<br>
-2.	Apply a KNN-style majority voting strategy<br>
-3.	Assign the majority label as the final prediction, the threshold is set as 0.4 will get the best AUC with 0.936
+&emsp;•	Retrieve the Top-10 most similar users using cosine similarity<br>
+&emsp;•	Apply a KNN-style majority voting strategy<br>
+&emsp;•	Assign the majority label as the final prediction, the threshold is set as 0.4 will get the best AUC with 0.936
 ________________________________________
 ## Result<br>
 Using this hybrid retrieval-based approach, the model achieved: AUC = 0.936
@@ -64,9 +64,9 @@ ________________________________________
 Occam's Razor: simplicity over complexity.<br>
 Strong data cleaning, thoughtful feature engineering, and simple retrieval-based methods can sometimes outperform overly complex models, depending on the application context.<br>
 More sophisticated models are often better suited for:<br>
-•	Large-scale datasets<br>
-•	Highly complex business scenarios<br>
-•	Situations requiring fine-grained trade-offs between precision and recall
+&emsp;•	Large-scale datasets<br>
+&emsp;•	Highly complex business scenarios<br>
+&emsp;•	Situations requiring fine-grained trade-offs between precision and recall
 ________________________________________
 ## Project Status<br>
 This project is currently still in the exploratory and development stage.<br>
@@ -76,4 +76,3 @@ ________________________________________
 ## Discussion<br>
 Feedback, reviews, and discussions are very welcome.<br>
 If you are working on similar problems involving hybrid features, vector retrieval, or churn prediction, feel free to share your thoughts or suggestions.
-
