@@ -61,8 +61,7 @@ ________________________________________
 Using this hybrid retrieval-based approach, the model achieved: AUC = 0.936
 ________________________________________
 ## Key Insight<br>
-Occam's Razor: simplicity over complexity.<br>
-Strong data cleaning, thoughtful feature engineering, and simple retrieval-based methods can sometimes outperform overly complex models, depending on the application context.<br>
+Occam's Razor: simplicity over complexity. Strong data cleaning, thoughtful feature engineering, and simple retrieval-based methods can sometimes outperform overly complex models, depending on the application context.<br>
 More sophisticated models are often better suited for:<br>
 &emsp;•	Large-scale datasets<br>
 &emsp;•	Highly complex business scenarios<br>
