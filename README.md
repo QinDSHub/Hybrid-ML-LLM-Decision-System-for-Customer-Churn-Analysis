@@ -27,8 +27,12 @@ ________________________________________
 ## Feature Engineering<br>
 Both numerical features and text features were incorporated into the model.<br>
 Numerical Features<br>
-&emsp;•	Standardized using scaling<br>
+&emsp;•	Standardized using scaling, the following preprocessing strategy was mainly used:<br>
+&emsp;&emsp;- Outlier detection: RobustScaler applied to columns containing extreme values<br>
+&emsp;&emsp;- Skewness detection: PowerTransformer utilized for highly skewed distributions<br>
+&emsp;&emsp;- Default handling: StandardScaler used for all remaining columns<br>
 &emsp;•	The scaler was fit on the entire dataset to ensure consistent scaling across all samples<br>
+
 Text Features<br>
 &emsp;•	Converted into 1536-dimensional embeddings using the OpenAI text embedding model<br>
 &emsp;•	These embeddings capture semantic similarity
