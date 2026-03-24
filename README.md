@@ -78,7 +78,7 @@ I will continue to share:
 
 •	Iteration details for each version
 
-•	Final, cleaned, and summarized code after completing the exploratory phase (code of release/v1.0 have been uploaded on 24th March 2026)
+•	Final, cleaned, and summarized code after completing the exploratory phase (code of release/v1.0 have been uploaded on 24th March 2026, run directly with automatic workflow by "python run.py")
 
 •	An additional exploration is underway: building a handwriting OCR web app using RedNote.OCR, which has so far delivered the best performance in recognizing my handwritten text while preserving structural layout, enhanced further through LoRA fine-tuning.
 
