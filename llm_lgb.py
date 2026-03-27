@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-
-
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 import os, dotenv, math
@@ -433,8 +430,6 @@ if __name__=='__main__':
     # valid_df_df['correct'] = valid_df_df.apply(lambda row: 1 if row['real_label'] == row['predicted_label'] else 0, axis=1)
     valid_df_df.to_csv(os.path.join(args.save_path, 'llm_predictions.csv'), index=False, encoding='utf-8-sig')
 
-
-# In[ ]:
 
 
 
