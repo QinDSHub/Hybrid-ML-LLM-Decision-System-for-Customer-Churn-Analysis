@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-
-
 import pandas as pd
 import os,argparse,math
 import numpy as np
@@ -191,14 +188,6 @@ if __name__ == '__main__':
     data = add_label(feat_df, all_customer_df, train_y, data_split_date)
     train_valid_split(data, args.save_path) # save file name is fixed as cleaned_data.csv
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
