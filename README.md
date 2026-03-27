@@ -44,7 +44,7 @@ For each customer profile in the validation set:
 
 ## Evaluation & Iterative Optimization
 
-•	Baseline performance with one hundred customers: AUC = 0.873
+•	Baseline performance with one hundred customers: AUC = 0.873, precision = 1, 	recall = 0.7463,	f1_score = 0.8547,	accurate = 0.83;
 
 •	Manual review of misclassified samples revealed several optimization opportunities:
 
