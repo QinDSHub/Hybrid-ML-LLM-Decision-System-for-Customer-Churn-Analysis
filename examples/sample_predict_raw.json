@@ -1,0 +1,26 @@
+{
+  "vin": "VIN_DEMO_0001",
+  "owner_type": "个人",
+  "car_mode": "Model-S",
+  "car_level": "family_2",
+  "member_level": "银卡",
+  "purchase_date": "2022-01-01",
+  "reference_date": "2025-12-31",
+  "visits": [
+    {
+      "date": "2022-03-01",
+      "mile": 3200,
+      "repair_type": "首保"
+    },
+    {
+      "date": "2022-09-01",
+      "mile": 12500,
+      "repair_type": "普通保养"
+    },
+    {
+      "date": "2023-05-10",
+      "mile": 23500,
+      "repair_type": "普修"
+    }
+  ]
+}
