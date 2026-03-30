@@ -1,85 +1,220 @@
-# Main Optimizations of Version 2 for the Customer Churn Analysis<br>
-This version focuses on data quality improvements, feature engineering, and a hybrid retrieval-based prediction strategy.<br>
+# Hybrid ML + LLM Retrieval System for Customer Churn Decisioning
 
-## Feature Cleaning: repair_type<br>
-The repair_type feature was further standardized and cleaned. It is now used for:<br>
-&emsp;•	Data filtering<br>
-&emsp;•	Text-based semantic representation<br>
-________________________________________
-## Removal of Internal Vehicles<br>
-Internal vehicles were removed from the dataset to prevent potential bias in the analysis and modeling process.
-________________________________________
-## Filtering Non-Active Service Visits<br>
-Only active service visits were retained. Records related to passive visits were removed.<br>
-Examples of passive visits include:<br>
-&emsp;•	Warranty/PDI claims<br>
-&emsp;•	Accident repairs<br>
-&emsp;•	Mandatory maintenance<br>
-&emsp;•	Warranty-related services
-________________________________________
-## Additional Data Cleaning<br>
-Further cleaning was applied to noisy or problematic records, such as removing invalid records (e.g., negative day differences) and imputed missing or abnormal values (e.g., mileage) using each user’s median daily metrics.
-________________________________________
-## Churn Labeling Strategy<br>
-Users who have not actively visited the service center for three years were labeled as: churn = 100%<br>
-This provides a clearer signal for churn identification and improving model calculating efficiency.
-________________________________________
-## Feature Engineering<br>
-Both numerical features and text features were incorporated into the model.<br>
-Numerical Features<br>
-&emsp;•	Standardized using scaling, the following preprocessing strategy was mainly used:<br>
-&emsp;&emsp;- Outlier detection: RobustScaler applied to columns containing extreme values<br>
-&emsp;&emsp;- Skewness detection: PowerTransformer utilized for highly skewed distributions<br>
-&emsp;&emsp;- Default handling: StandardScaler used for all remaining columns<br>
-&emsp;•	The scaler was fit on the entire dataset to ensure consistent scaling across all samples<br>
+A production-oriented churn prediction system that combines **structured machine learning**, **semantic text embeddings**, and a **retrieval-based KNN decisioning strategy**.  
+This project began as a research-driven modeling workflow and was later refactored into a more deployable engineering system with FastAPI serving, Docker support, and Azure-oriented CI/CD scaffolding.
 
-Text Features<br>
-&emsp;•	Converted into high dimensional embeddings using the OpenAI text embedding model<br>
-&emsp;•	These embeddings capture semantic similarity
-________________________________________
-## Feature Fusion<br>
-Numerical and text embeddings were concatenated horizontally.<br>
-Feature weights were applied:<br>
-&emsp;•	Numerical features: 70%<br>
-&emsp;•	Text features: 30%<br>
-After concatenation, L2 normalization was applied and made sure fit on full dataset to ensure consistent vector scaling, and after that to split into train and valid.
-________________________________________
-## Why LLM Inference Was Not Used<br>
-In the previous version, I transformed numerical features into binned textual features and fed them into an LLM. However, a very important and fundamental concept has been overlooked: text embedding models struggled to distinguish values such as “1-year car age” vs “11-year car age”, actually “1-year car age” should be much more similar with ‘2-year car age’ rather than ’11-year car age’.<br><br>
-While LLMs are extremely powerful for text reasoning, this task is primarily driven by structured numerical signals, so relying on LLM-based inference did not provide meaningful benefits. This led to the current hybrid approach.
-________________________________________
-## Training and Validation Split<br>
-•	Since the preprocessed dataset is unique to each vehicle user, we could safely perform a shuffling train-validation split to prevent label leakage.<br>
-•	Custom Training embeddings were stored in ChromaDB for vector similarity search
-________________________________________
-## Prediction Method (KNN-Style Retrieval)<br>
-Instead of using a traditional classifier, this version adopts a vector similarity retrieval strategy.<br>
-For each sample in the validation set:<br>
-&emsp;•	Retrieve the Top-k most similar users using cosine similarity<br>
-&emsp;•	Apply a KNN-style majority voting strategy<br>
-&emsp;•	Assign the majority label as the final prediction, the threshold is set as 0.4 will get the best AUC with 0.936
-________________________________________
-## Result<br>
-Using this hybrid retrieval-based approach, the model achieved on total 10% valid datasets: AUC = 0.936，precision = 0.9256, recall = 0.9232, f1_score = 0.9244, accurate = 0.9383;
+---
 
-________________________________________
-## Limitations and practical considerations<br>
-While the approach performs well in many scenarios, several practical considerations are worth highlighting.<br>
+## Why this project matters
 
-First, the effectiveness of KNN-based similarity retrieval depends heavily on whether sufficiently similar users actually exist in the dataset. In certain edge cases, the nearest neighbors retrieved may still be weakly related to the target user. Directly transferring labels or behavioral signals from such neighbors may introduce noise rather than meaningful signal. A practical mitigation strategy is to introduce a similarity threshold, ensuring that only high-confidence neighbors contribute to downstream inference. In addition, multiple similarity or distance metrics can be incorporated to better monitor and validate the robustness of the retrieval process.<br>
+Customer churn prediction is often treated as a pure classification task. In practice, however, real business scenarios require more than raw prediction accuracy:
 
-Second, the choice of text embedding model should be aligned with the complexity and richness of the textual features. OpenAI embeddings generate Transformer-based representations with high dimensions, which provide strong semantic capacity but may be unnecessarily heavy for simple or limited textual inputs. In those cases, lighter embedding models with lower-dimensional representations may offer a more efficient trade-off between semantic fidelity and computational cost.<br>
+- data quality issues must be handled carefully
+- structured and unstructured signals need to be combined meaningfully
+- predictions should be interpretable enough to support decision-making
+- the solution should be deployable, testable, and extensible
 
-Finally, an interesting extension of thinking is that the models developed can naturally serve as Modular Capability Providers (MCPs) within agent or multi-agent architectures, enabling them to be orchestrated as reusable components in larger decision or automation pipelines.
-________________________________________
-## Key Insight<br>
-Following the principle of Occam’s Razor, simplicity often outperforms unnecessary complexity. In practice, high-quality data cleaning, thoughtful feature engineering, and well-designed retrieval mechanisms can sometimes deliver stronger results than increasingly complex modeling stacks.<br>
-________________________________________
-## Project Status<br>
-This project is currently still in the exploratory and development stage.<br>
-The system has not yet been fully wrapped into a multi-agent or production-ready pipeline, so the full codebase is not published at this moment.<br>
-The repository and implementation details will be shared once development is completed.
-________________________________________
-## Discussion<br>
-Feedback, reviews, and discussions are very welcome.<br>
-If you are working on similar problems involving hybrid features, vector retrieval, or churn prediction, feel free to share your thoughts or suggestions.
+This project was designed with those practical constraints in mind.
+
+---
+
+## Project highlights
+
+- Built a **hybrid prediction framework** combining numerical features and semantic text embeddings
+- Designed a **retrieval-based KNN decisioning approach** instead of relying only on a traditional classifier
+- Achieved **AUC = 0.936** on the validation dataset
+- Refactored research-style code into a more **modular, production-oriented architecture**
+- Exposed the model through a **FastAPI inference service**
+- Added **Docker containerization** and **GitHub Actions deployment scaffolding for Azure**
+- Introduced a lightweight **hash embedding mode** for smoke tests, demos, and CI-friendly workflows
+
+---
+
+## My contribution
+
+The **core business logic**, **system core frameworks**, **data preprocessing**, **feature engineering**, and **model-related implementation** were independently developed by me.
+
+To improve engineering readiness, parts of the system — including **FastAPI service wrapping**, **Docker containerization**, **modular refactoring**, and portions of the **deployment / MLOps scaffolding** — were completed with ChatGPT-assisted support, then reviewed, adapted, validated, and tested by me before integration into the project.
+
+---
+
+## Business and technical objective
+
+The goal of this project is to predict customer churn in an automotive service context by learning from both:
+
+- **structured behavioral and service features**
+- **text-based semantic signals**
+
+Rather than using a purely black-box classifier, the system retrieves similar historical users and makes predictions through a **nearest-neighbor decisioning process**, improving both practical interpretability and traceability.
+
+---
+
+## Modeling approach
+
+### 1. Data cleaning and filtering
+The pipeline applies several business-driven cleaning steps, including:
+
+- further standardization of `repair_type`
+- not add internal vehicles into datasets to reduce bias
+- filtering out non-active service visits such as:
+  - warranty / PDI claims
+  - accident repairs
+  - mandatory maintenance
+  - warranty-related services
+- some invalid records filtering directly instead of filling up with statistics method
+- imputation of missing or abnormal values using user-level median daily metrics
+- users who had not actively returned to the service center for **three years** were labeled as churned and not put into model datasets for training or validation
+
+### 2. Feature engineering
+The model combines both **numerical** and **textual** signals.
+
+#### Numerical features
+Different preprocessing strategies were applied depending on feature distribution:
+
+- `RobustScaler` for columns with extreme outliers
+- `PowerTransformer` for highly skewed features
+- `StandardScaler` for remaining columns
+
+#### Text features
+Relevant textual attributes were converted into semantic vectors using an **OpenAI text embedding model**.
+
+### 4. Feature fusion
+Numerical features and text embeddings were concatenated with weighting:
+
+- Numerical features: **70%**
+- Text features: **30%**
+
+L2 normalization was then applied to ensure consistent vector scaling.
+
+### 5. Prediction strategy
+Instead of training a standard classifier, the system performs:
+
+1. cosine similarity retrieval of Top-k nearest users
+2. KNN-style majority voting
+3. final churn prediction based on neighbor consensus
+
+This makes the prediction logic easier to inspect and explain in business terms.
+
+---
+
+## Results
+
+On the validation dataset, the hybrid retrieval-based approach achieved:
+
+- **AUC**: 0.936
+- **Precision**: 0.9256
+- **Recall**: 0.9232
+- **F1-score**: 0.9244
+- **Accuracy**: 0.9383
+
+A key takeaway from this work is that **high-quality data cleaning, careful feature design, and a well-structured retrieval mechanism** can outperform unnecessarily complex modeling stacks in real-world business problems.
+
+---
+
+## Additional experiments
+
+I also explored several alternative modeling directions to better understand the trade-offs between accuracy, efficiency, and deployment practicality.
+
+- Replacing OpenAI embeddings with an offline `sentence-transformers` model reduced external dependency, but performance dropped to an AUC at **0.90**
+- Applying **PCA** to OpenAI text embeddings improved compactness, but significantly hurt performance, reducing AUC to **0.81**
+- I also ran text feature ablation experiments to evaluate feature importance and reduce token cost. This allowed me to retain an AUC of **0.935**, only **0.001 below the best model**, while improving runtime efficiency and lowering inference cost
+
+These experiments reinforced an important conclusion: for this use case, semantic text information adds real predictive value, but careful feature selection is essential for balancing performance and cost.
+
+However, from a modeling perspective, another promising direction is to better integrate **LLM reasoning** with **traditional ML prediction**, so that the system can simultaneously deliver:
+
+- strong predictive accuracy  
+- persuasive, human-readable explanations  
+- practical marketing or customer-retention recommendations  
+
+I previously explored several early versions of this idea. For example, I experimented with optimizing **binned numerical features** before feeding them into an LLM-style reasoning pipeline, based on testing with an offline **sentence-transformer** setup. I also tested a **sliding-window labeling strategy** to see whether a more dynamic target design could improve alignment between reasoning outputs and observed customer behavior.
+
+While the explanation quality and business recommendations were often strong and practically meaningful, the reasoning outputs still showed a noticeable gap from the predefined **rule-based labels** and **sliding-window labels** across multiple evaluation metrics. Although the results were not yet strong enough to publish, I believe this remains a highly valuable direction for future exploration—especially for building systems that are not only accurate, but also interpretable and actionable in real business settings.
+
+---
+
+## Engineering work in Version 3
+
+Version 3 focused on turning the original modeling workflow into a more engineering-ready system.
+
+### Main improvements
+- refactored script-based code into clearer modules
+- separated training, inference, configuration, and deployment logic
+- replaced heavier persistence dependency with a lighter `joblib` model bundle approach
+- added FastAPI service endpoints for online prediction
+- added Docker-based packaging for deployment consistency
+- added CI/CD scaffolding for Azure Container Apps
+- introduced `hash` embedding mode for lightweight testing and demos
+
+> Note: the actual `model_bundle.joblib` file is not included in this repository because of its size.
+
+---
+
+## Project structure
+
+```text
+churn-prediction-fastapi/
+├── app/
+│   ├── api/main.py                    # FastAPI entrypoint
+│   ├── core/config.py                 # configuration management
+│   ├── schemas/predict.py             # request / response schemas
+│   └── services/
+│       ├── embeddings.py              # OpenAI / Hash embeddings
+│       ├── feature_engineering.py     # preprocessing + feature construction
+│       └── model.py                   # training, save/load, prediction
+├── scripts/
+│   ├── train_pipeline.py              # train model from raw CSV
+│   ├── bootstrap_demo_model.py        # generate demo model bundle
+│   └── run_api.py                     # local API startup
+├── tests/
+│   └── test_smoke.py                  # smoke tests
+├── .github/workflows/
+│   ├── ci.yml                         # CI pipeline
+│   └── deploy-azure-containerapps.yml # Azure deployment workflow
+├── azure/create_infra.sh              # Azure infra bootstrap
+├── examples/sample_predict_raw.json   # sample API request
+├── Dockerfile
+├── requirements.txt
+└── README.md
+
+## Project Status
+
+The FastAPI application has been implemented and locally validated.
+
+Docker packaging and Azure deployment scaffolding have also been prepared as part of the engineering refactor, but end-to-end validation and cloud deployment have not yet been fully completed.
+
+---
+
+## Future directions
+One of my next priorities is to continue modularizing the core pipeline and integrate it into Agentic Skill Workflows for automated orchestration. Potential examples include:
+•	triggering incremental prediction when new data arrives 
+•	running scheduled full retraining and model refresh 
+•	automating evaluation, validation, and deployment as reusable workflows 
+I am also interested in comparing this approach with Multi-Agent Workflows to better understand which architecture is more effective for maintainability, flexibility, and operational efficiency in production ML systems.
+
+---
+
+## Tech stack
+•	Python 
+•	Pandas / NumPy 
+•	scikit-learn 
+•	FastAPI 
+•	Uvicorn 
+•	GitHub Actions 
+•	OpenAI Embeddings
+•	LLM infrastructure
+
+The FastAPI application has been implemented and locally validated. Docker packaging and Azure deployment scaffolding have also been prepared as part of the engineering refactor, but end-to-end validation and cloud deployment have not yet been fully completed.
+---
+
+## Closing note
+This project reflects a principle I strongly value:
+In many real-world business problems, strong data cleaning, thoughtful feature engineering, and a simple but well-designed retrieval strategy can outperform unnecessary complexity.
+It also reflects my interest in designing practical intelligent systems that combine my expertise in ML/DL, LLMs, and Agentic AI.
+
+---
+
+
+## Discussion
+Feedback, technical suggestions, and collaboration are always welcome.
+
