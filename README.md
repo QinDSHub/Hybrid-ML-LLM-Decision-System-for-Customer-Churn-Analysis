@@ -89,9 +89,9 @@ L2 normalization was then applied to ensure consistent vector scaling.
 ### Prediction strategy
 Instead of training a standard classifier, the system performs:
 
-1. cosine similarity retrieval of Top-k nearest users
-2. KNN-style majority voting
-3. final churn prediction based on neighbor consensus
+- cosine similarity retrieval of Top-k nearest users
+- KNN-style majority voting
+- final churn prediction based on neighbor consensus
 
 This makes the prediction logic easier to inspect and explain in business terms.
 
@@ -187,6 +187,7 @@ The FastAPI application has been fully implemented and successfully validated in
 ---
 
 ## Deployment Guide
+
 ### Local Setup and Testing
 It is recommended to create a dedicated virtual environment for this project.
 
