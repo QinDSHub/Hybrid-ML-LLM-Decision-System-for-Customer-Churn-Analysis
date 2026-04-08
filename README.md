@@ -143,7 +143,7 @@ Version 3 focused on turning the original modeling workflow into a more engineer
 - replaced heavier persistence dependency with a lighter `joblib` model bundle approach
 - added FastAPI service endpoints for online prediction
 - added Docker-based packaging for deployment consistency
-- added CI/CD scaffolding for Azure Container Apps
+- added deployment by GitHub and Azure
 - introduced `hash` embedding mode for lightweight testing and demos
 
 > Note: the actual `model_bundle.joblib` file is not included in this repository because of its size.
