@@ -182,9 +182,105 @@ churn-prediction-fastapi/
 
 ## Project Status
 
-The FastAPI application has been implemented and locally validated.
+The FastAPI application has been fully implemented and successfully validated in a local environment. The Docker build and runtime workflow was also tested successfully. However, deployment through Azure ACR could not be completed because my school-associated Azure account does not have the necessary permissions. Nevertheless, the deployment steps are provided below and may be useful for users who have access to Azure ACR and GitHub LFS.
 
-Docker packaging and Azure deployment scaffolding have also been prepared as part of the engineering refactor, but end-to-end validation and cloud deployment have not yet been fully completed.
+---
+
+## Deployment Guide
+### Local Setup and Testing
+It is recommended to create a dedicated virtual environment for this project.
+
+- Install dependencies: pip install -r requirements.txt
+
+- Create your own .env file based on .env.example, and configure the following:
+OPENAI_API_KEY=your_api_key
+OPENAI_BASE_URL=
+OPENAI_MODEL=text-embedding-3-small
+MODEL_BUNDLE_PATH=artifacts/model/model_bundle.joblib
+
+- Run the training pipeline with real data:
+python scripts/train_pipeline.py \
+  --raw-dir data/raw \
+  --artifact-dir artifacts/model \
+  --processed-path data/processed/cleaned_data.csv \
+  --embedding-provider openai
+
+- Start the API service locally:
+uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+- Access the service:
+Swagger UI: http://127.0.0.1:8000/docs
+Health Check: http://127.0.0.1:8000/health
+
+### Docker Deployment
+- Launch Docker Desktop (Windows) and ensure you are logged in.
+
+- Open Windows PowerShell and navigate to the project directory: cd D:\the_project\churn_model
+
+- Build the Docker image locally: docker build -t churn-prediction-api:local .
+
+- Set environment variables:
+$env:OPENAI_API_KEY="your_api_key"
+$env:OPENAI_BASE_URL="your_base_url"
+
+- Run the container locally:
+docker run --rm -p 8000:8000 `
+  -e OPENAI_API_KEY=$env:OPENAI_API_KEY `
+  -e OPENAI_BASE_URL=$env:OPENAI_BASE_URL `
+  -e MODEL_BUNDLE_PATH=/app/artifacts/model/model_bundle.joblib `
+  churn-prediction-api:local
+
+Note: Ensure that artifacts/model/model_bundle.joblib exists before deployment. This file is not included in the repository due to its size.
+
+- After startup, access the service:
+http://localhost:8000
+Swagger UI: http://localhost:8000/docs
+
+### Azure Deployment (Public & Private Options)
+In general, deploying with Azure Container Registry (ACR) requires appropriate permissions or a paid service plan.
+
+For public deployment, you can push your Docker image to a public registry (e.g., Docker Hub) and deploy from there. Below are the steps:
+
+- Push Image to Docker Hub
+Ensure the Docker workflow in Section 2 runs successfully.
+
+- In Windows powershell, log in to Docker Hub: docker login
+
+- Tag the image: docker tag churn-prediction-api:local yourdockerhubname/churn-prediction-api:v1
+
+- Push the image: docker push yourdockerhubname/churn-prediction-api:latest
+- Verify the image in Docker Hub.
+- Then, deploy via Azure CLI
+- Ensure Azure CLI is installed before proceeding, and then in windows powershell to log in to Azure:az login
+- Create a Resource Group: az group create --name churn-model --location uksouth
+Note: uksouth is recommended due to broader service availability, but availability may depend on your account permissions.
+
+- Create a Container Apps Environment:
+az containerapp env create `
+  --name churn-api-env `
+  --resource-group churn-model `
+  --location uksouth
+
+- Create the Container App:
+az containerapp create `
+  --name churn-prediction-api `
+  --resource-group churn-model `
+  --environment churn-api-env `
+  --image docker.io/yourdockerhubname/churn-prediction-api:latest `
+  --target-port 8000 `
+  --ingress external `
+  --env-vars OPENAI_API_KEY=your_api_key OPENAI_BASE_URL=your_base_url MODEL_BUNDLE_PATH=/app/artifacts/model/model_bundle.joblib
+
+- Azure Container Apps CLI allows you to create and configure applications with external ingress enabled via --ingress external, while specifying the target port.
+
+- Retrieve the application URL:
+az containerapp show `
+  --name churn-prediction-api `
+  --resource-group churn-model `
+  --query properties.configuration.ingress.fqdn
+  
+- Access the deployed service:
+https://<your-container-app-domain>
 
 ---
 
